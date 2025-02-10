@@ -1,10 +1,11 @@
 import { Text, View, Image, StyleSheet, TouchableOpacity } from "react-native";
-
+import { useRouter } from 'expo-router';
 export default function Index() {
+  const router = useRouter();
   return (
     <View style={styles.background}>
       <Image source={require("../assets/images/LOGO.png")} style={styles.logo} />
-      <TouchableOpacity style={styles.KotakMulai}>
+      <TouchableOpacity style={styles.KotakMulai} onPress={() => router.push('/Dashboard')}>
         <Text style={styles.Mulai}>Mulai</Text>
       </TouchableOpacity>
     </View>
