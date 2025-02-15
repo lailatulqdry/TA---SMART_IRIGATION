@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     width: 250, // lebar
     height: 250, // tinggi
     alignSelf: "center",
-    marginTop: 140,
+    marginTop: 250,
   },
   KotakMulai: {
     backgroundColor: "#bdb76b", 
