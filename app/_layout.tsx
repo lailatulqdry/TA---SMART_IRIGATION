@@ -8,6 +8,10 @@ export default function RootLayout() {
         options={{ headerShown: false }} 
       />
       <Stack.Screen name="Dashboard" />
+      <Stack.Screen name="Suhu" />
+      <Stack.Screen name="Kelembapan" />
+      <Stack.Screen name="Cahaya" />
+      <Stack.Screen name="AliranAir" />
     </Stack>
   );
 }
