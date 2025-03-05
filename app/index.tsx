@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     width: 250, // lebar
     height: 250, // tinggi
     alignSelf: "center",
-    marginTop: 250,
+    marginTop: 120,
   },
   KotakMulai: {
     backgroundColor: "#bdb76b", 
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     borderRadius: 25, // lengkung
     marginHorizontal: 60,
     alignItems: "center",
-    marginTop: 50,
+    marginTop: 10,
   },
   Mulai: {
     fontSize: 20,
