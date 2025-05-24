@@ -6,7 +6,8 @@ import { useRouter } from 'expo-router';
 
 const CHANNEL_ID = "2842528";
 const API_KEY = "KJOU5D3MV10GA84D";
-const WRITE_API_KEY = "UFWK1ZM1368TGLG0";
+const WRITE_API_KEY = "B2N184WXC777W64I";
+
 
 const Dashboard = () => {
   const [sensorData, setSensorData] = useState({
@@ -14,7 +15,6 @@ const Dashboard = () => {
     suhu2: 0,
     kelembapan1: 0,
     kelembapan2: 0,
-    cahaya1: 0,
     cahaya2: 0,
     aliranAir: 0,
   });
@@ -33,32 +33,36 @@ const Dashboard = () => {
         suhu2: latestData.field2,
         kelembapan1: latestData.field3,
         kelembapan2: latestData.field4,
-        cahaya1: latestData.field5,
-        cahaya2: latestData.field6,
-        aliranAir: latestData.field7,
+        cahaya2: latestData.field5,
+        aliranAir: latestData.field6,
       });
 
-      setIsPumpOn(latestData.field8 === 1);
-      
+      console.log("Status pompa dari ThingSpeak:", latestData.field7);
+      setIsPumpOn(parseInt(latestData.field7) === 1);
+
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  // Fungsi untuk menghidupkan/mematikan pompa
-  const togglePump = async () => {
-    const newPumpStatus = !isPumpOn ? 1 : 0; // 1 = ON, 0 = OFF
-    setIsPumpOn(!isPumpOn); // Ubah state lokal dulu untuk UI responsif
-
-    try {
-      await axios.get(
-        `https://api.thingspeak.com/update?api_key=${WRITE_API_KEY}&field8=${newPumpStatus}`
-      );
-      console.log(`Pompa ${newPumpStatus === 1 ? "ON" : "OFF"} berhasil diperbarui di ThingSpeak`);
-    } catch (error) {
-      console.error("Gagal mengupdate status pompa:", error);
-    }
-  };
+  // const togglePump = async () => {
+  //   const newPumpStatus = !isPumpOn ? 1 : 0;
+  
+  //   try {
+  //     const response = await axios.get(
+  //       `https://api.thingspeak.com/update?api_key=${WRITE_API_KEY}&field7=${newPumpStatus}`
+  //     );
+  
+  //     if (response.data !== 0) {
+  //       setIsPumpOn(newPumpStatus === 1);
+  //       console.log(`Pompa ${newPumpStatus === 1 ? "ON" : "OFF"} berhasil diperbarui di ThingSpeak`);
+  //     } else {
+  //       console.warn("Gagal mengupdate status pompa ke ThingSpeak (update return 0)");
+  //     }
+  //   } catch (error) {
+  //     console.error("Gagal mengupdate status pompa:", error);
+  //   }
+  // };
 
   useEffect(() => {
     fetchSensorData();
@@ -70,19 +74,27 @@ const Dashboard = () => {
 
   return (
     <ScrollView style={styles.scrollContainer}>
+      {/* <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <Ionicons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity> */}
       <View style={styles.background}>
         <Text style={styles.judul}>Smart {'\n'}GreenHouse</Text>
 
+        {/* Kartu Sensor */}
         <View style={styles.KartuBaris}>
           <View style={styles.Kartu}>
             <View style={styles.tekskartu}>
-              <View style={styles.grub}>
-                <FontAwesome name="thermometer-half" size={20} color="black" style={styles.iconsuhu} />
-                <Text style={styles.teks1}>Suhu</Text>
-              </View>
               <TouchableOpacity onPress={() => router.push('/Suhu')}>
-                <Text style={styles.teks2}>{sensorData.suhu1} %  </Text>
-                <Text style={styles.teks2}>{sensorData.suhu2} °C </Text>
+              <View style={styles.grub}>
+                <FontAwesome name="tint" size={18} color="black" style={styles.icon} />
+                <Text style={styles.label}>Kelembaban:</Text>
+              </View>
+              <Text style={styles.teks2}>{sensorData.suhu1} %</Text>
+              <View style={styles.grub}>
+                <FontAwesome name="thermometer-half" size={18} color="black" style={styles.icon} />
+                <Text style={styles.label}>Suhu Udara:</Text>
+              </View>
+              <Text style={styles.teks2}>{sensorData.suhu2} °C</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -91,11 +103,11 @@ const Dashboard = () => {
             <View style={styles.tekskartu}>
               <View style={styles.grub}>
                 <MaterialIcons name="water" size={20} color="black" style={styles.iconsuhu} />
-                <Text style={styles.teks1}>Kelembapan</Text>
+                <Text style={styles.teks1}>Kelembapan Tanah</Text>
               </View>
               <TouchableOpacity onPress={() => router.push('/Kelembapan')}>
-                <Text style={styles.teks2}>{sensorData.kelembapan1} RAW </Text>
-                <Text style={styles.teks2}>{sensorData.kelembapan2} % </Text>
+                <Text style={styles.teks2}>{sensorData.kelembapan1} RAW</Text>
+                <Text style={styles.teks2}>{sensorData.kelembapan2} %</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -109,7 +121,6 @@ const Dashboard = () => {
                 <Text style={styles.teks1}>Cahaya</Text>
               </View>
               <TouchableOpacity onPress={() => router.push('/Cahaya')}>
-                <Text style={styles.teks2}>{sensorData.cahaya1} RAW</Text>
                 <Text style={styles.teks2}>{sensorData.cahaya2} %</Text>
               </TouchableOpacity>
             </View>
@@ -128,13 +139,14 @@ const Dashboard = () => {
           </View>
         </View>
 
+        {/* Switch Pompa */}
         <View style={styles.switch1}>
           <Text style={styles.switchnama}>Pompa Air</Text>
           <Switch
-              value={isPumpOn}
-              onValueChange={togglePump} // Memanggil fungsi togglePump() untuk memperbarui ThingSpeak
-              trackColor={{ false: "#767577", true: "#ffffff" }}
-              thumbColor={isPumpOn ? "#f5dd4b" : "#f4f3f4"}
+            value={isPumpOn}
+            disabled={true} // tidak bisa ditekan
+            trackColor={{ false: "#767577", true: "#ffffff" }}
+            thumbColor={isPumpOn ? "#f5dd4b" : "#f4f3f4"}
           />
           <Text style={[styles.pumpStatus, { color: isPumpOn ? "#f5f5dc" : "red" }]}>
             {isPumpOn ? "Pompa ON" : "Pompa OFF"}
@@ -150,6 +162,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#556b2f",
   },
+  backButton: {
+    marginTop: 40,
+    marginBottom: 10,
+  },  
   background: {
     flex: 1,
     backgroundColor: "#556b2f",
@@ -171,6 +187,15 @@ const styles = StyleSheet.create({
     width: 135,
     height: 135,
   },
+  icon: {
+    marginRight: 6,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#555',
+    marginTop: 4,
+  },  
   tekskartu: {
     backgroundColor: "#f5f5dc",
     borderRadius: 10,
@@ -200,7 +225,7 @@ const styles = StyleSheet.create({
   switch1: {
     flexDirection: "column",
     alignItems: "center",
-    marginTop: 5,
+    marginTop: 15,
   },
   switchnama: {
     fontSize: 18,

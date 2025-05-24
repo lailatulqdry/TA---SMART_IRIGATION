@@ -8,7 +8,6 @@ const CHANNEL_ID = "2842528"; // Ganti dengan Channel ID kamu
 const READ_API_KEY = "KJOU5D3MV10GA84D"; // Ganti dengan API Key dari ThingSpeak
 
 const THINGSPEAK_GRAPH_URL_5 = `https://thingspeak.com/channels/${CHANNEL_ID}/charts/5?api_key=${READ_API_KEY}&width=${width - 10}&height=500&bgcolor=%23ffffff&color=%23d62020&dynamic=true`;
-const THINGSPEAK_GRAPH_URL_6 = `https://thingspeak.com/channels/${CHANNEL_ID}/charts/6?api_key=${READ_API_KEY}&width=${width - 10}&height=500&bgcolor=%23ffffff&color=%2320d6d2&dynamic=true`;
 
 const CahayaChart = () => {
   return (
@@ -16,14 +15,6 @@ const CahayaChart = () => {
       <Text style={styles.header}>Grafik light Value</Text>
       <WebView 
         source={{ uri: THINGSPEAK_GRAPH_URL_5 }} 
-        style={styles.webview} 
-        scalesPageToFit={true}
-        javaScriptEnabled={true}
-      />
-
-      <Text style={styles.header}>Grafik light Percent</Text>
-      <WebView 
-        source={{ uri: THINGSPEAK_GRAPH_URL_6 }} 
         style={styles.webview} 
         scalesPageToFit={true}
         javaScriptEnabled={true}
